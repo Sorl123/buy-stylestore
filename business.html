@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Buy & Style Store</title>
+<link rel="icon" type="image/x-icon" href="image/logo1.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Buy & Style Store with Multi Dropdown & Cart</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      color: #333;
+      background-color: #f0f2f5;
+      background-image:
+        linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+      padding-bottom: 70px;
+    }
+
+    header {
+      background-color: #1e1e2f;
+      color: white;
+      padding: 15px 40px;
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+      position: relative;
+      z-index: 1100;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      background: #2c2c44;
+      padding: 8px 0;
+      font-size: 16px;
+      user-select: none;
+      position: sticky;
+      top: 0;
+      z-index: 1200;
+    }
+
+    .dropdown {
+      position: relative;
+      margin: 0 20px;
+    }
+
+    .dropdown > button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 6px;
+      transition: background 0.3s;
+    }
+
+    .dropdown > button:hover,
+    .dropdown > button:focus {
+      background: #444466;
+      outline: none;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: white;
+      min-width: 160px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      border-radius: 6px;
+      top: 36px;
+      left: 0;
+      z-index: 1300;
+    }
+
+    .dropdown-content button,
+    .dropdown-content select {
+      width: 100%;
+      padding: 10px 14px;
+      border: none;
+      background: white;
+      text-align: left;
+      cursor: pointer;
+      font-size: 15px;
+      border-radius: 0;
+      outline: none;
+    }
+
+    .dropdown-content button:hover,
+    .dropdown-content select:hover {
+      background-color: #eee;
+    }
+
+    .dropdown:hover .dropdown-content,
+    .dropdown:focus-within .dropdown-content {
+      display: block;
+    }
+
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 30px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      width: 250px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .card h2 {
+      margin: 15px 0 8px;
+    }
+
+    .price {
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    button.add-to-cart {
+      background: #007bff;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+
+    button.add-to-cart:hover {
+      background: #0056b3;
+    }
+
+    #cartSidebar {
+      position: fixed;
+      bottom: 70px;
+      right: 20px;
+      width: 320px;
+      max-height: 60vh;
+      background: white;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      padding: 20px;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+      border-radius: 10px 10px 0 0;
+    }
+
+    #cartSidebar.open {
+      transform: translateY(0);
+    }
+
+    #cartSidebar h2 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-weight: 600;
+      font-size: 20px;
+    }
+
+    #cartItems {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #cartItems li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    #cartItems li span.item-name {
+      flex-grow: 1;
+    }
+
+    #cartItems li button.remove-item {
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s;
+      margin-left: 10px;
+    }
+
+    #cartItems li button.remove-item:hover {
+      background: #a71d2a;
+    }
+
+    #cartTotal {
+      font-weight: bold;
+      margin-top: 15px;
+      font-size: 18px;
+      text-align: right;
+    }
+
+    #cartToggleBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 15px 25px;
+      cursor: pointer;
+      z-index: 1100;
+      font-size: 18px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      transition: background 0.3s;
+    }
+
+    #cartToggleBtn:hover {
+      background: #0056b3;
+    }
+
+    .dropdown-content.history {
+      max-height: 200px;
+      overflow-y: auto;
+      padding: 0;
+    }
+
+    .history-item {
+      padding: 8px 14px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+      cursor: default;
+      background: white;
+    }
+
+    .history-item:last-child {
+      border-bottom: none;
+    }
+
+    footer {
+      background-color: #1e1e2f;
+      color: white;
+      text-align: center;
+      padding: 15px 10px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      font-size: 16px;
+      user-select: none;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  Buy & Style Store
+</header>
+
+<nav>
+  <button style="color: white; background: none; border: none; font-weight: 600; cursor: pointer;" onclick="goHome()">Home</button>
+
+  <div class="dropdown">
+    <button>Cart ▼</button>
+    <div class="dropdown-content">
+      <button onclick="openCart()">View Cart</button>
+      <button onclick="clearCart()">Clear Cart</button>
+      <button onclick="checkout()">Checkout</button>
+    </div>
+  </div>
+
+  <div class="dropdown">
+    <button>Date to Buy ▼</button>
+    <div class="dropdown-content" style="padding: 10px;">
+      <input type="date" id="purchaseDate" onchange="selectDate()" style="width: 100%; font-size: 16px; padding: 6px; border-radius: 4px; border: 1px solid #ccc;">
+    </div>
+  </div>
+
+  <div class="dropdown">
+    <button>Discount ▼</button>
+    <div class="dropdown-content">
+      <select id="discountSelect" onchange="applyDiscount()" style="width: 100%; font-size: 16px; padding: 6px; border-radius: 4px; border: 1px solid #ccc;">
+        <option value="0">No Discount</option>
+        <option value="5">5% Off</option>
+        <option value="10">10% Off</option>
+        <option value="15">15% Off</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="dropdown">
+    <button>Order History ▼</button>
+    <div class="dropdown-content history" id="orderHistoryDropdown">
+      <p style="padding: 10px; font-style: italic; margin: 0;">No orders yet.</p>
+    </div>
+  </div>
+</nav>
+
+<div class="products">
+  <!-- Existing products here -->
+  <div class="card">
+    <img src="image/speaker.jpg" alt="Bluetooth Speaker" />
+    <h2>Bluetooth Speaker</h2>
+    <div class="price">$7.5</div>
+    <button class="add-to-cart" onclick="addToCart('Bluetooth Speaker', 7.5)">Add to Cart</button>
+  </div>
+  <div class="card">
+    <img src="image/airpods.jpg" alt="AirPods Pro" />
+    <h2>AirPods Pro</h2>
+    <div class="price">$5.5</div>
+    <button class="add-to-cart" onclick="addToCart('AirPods Pro', 5.5)">Add to Cart</button>
+  </div>
+  <div class="card">
+    <img src="image/powerbank.jpg" alt="Powerbank" />
+    <h2>Powerbank</h2>
+    <div class="price">$6.5</div>
+    <button class="add-to-cart" onclick="addToCart('Powerbank', 6.5)">Add to Cart</button>
+  </div>
+  <div class="card">
+    <img src="image/menshirt.jpg" alt="Men's T-Shirt" />
+    <h2>Men's T-Shirt</h2>
+    <div class="price">$10.99</div>
+    <button class="add-to-cart" onclick="addToCart(`Men's T-Shirt`, 10.99)">Add to Cart</button>
+  </div>
+  <div class="card">
+    <img src="image/jacket.jpg" alt="Women's Jacket" />
+    <h2>Women's Jacket</h2>
+    <div class="price">$10.00</div>
+    <button class="add-to-cart" onclick="addToCart(`Women's Jacket`, 10.00)">Add to Cart</button>
+  </div>
+
+  <!-- NEW PRODUCTS -->
+  <div class="card">
+    <img src="image/iphonecase.jpg" alt="iPhone Case" />
+    <h2>iPhone Case</h2>
+    <div class="price">$2.5</div>
+    <button class="add-to-cart" onclick="addToCart('iPhone Case', 2.5)">Add to Cart</button>
+  </div>
+  <div class="card">
+    <img src="image/headphone.jpg" alt="Headphones" />
+    <h2>Headphones</h2>
+    <div class="price">$6.5</div>
+    <button class="add-to-cart" onclick="addToCart('Headphones', 6.5)">Add to Cart</button>
+  </div>
+</div>
+
+<button id="cartToggleBtn" onclick="toggleCart()">Cart 🛒</button>
+
+<div id="cartSidebar">
+  <h2>Your Cart</h2>
+  <ul id="cartItems"></ul>
+  <div id="cartTotal"></div>
+</div>
+
+<footer>
+  Thank you for shopping with Buy & Style Store! 😊
+</footer>
+
+<script>
+  const cart = [];
+  let purchaseDate = null;
+  let discountPercent = 0;
+  let orderHistory = [];
+
+  function goHome() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function addToCart(name, price) {
+    const existing = cart.find(item => item.name === name);
+    if (existing) {
+      existing.quantity++;
+    } else {
+      cart.push({ name, price, quantity: 1 });
+    }
+    updateCartUI();
+  }
+
+  function updateCartUI() {
+    const cartItemsEl = document.getElementById('cartItems');
+    const cartTotalEl = document.getElementById('cartTotal');
+    cartItemsEl.innerHTML = '';
+    let total = 0;
+
+    cart.forEach(({ name, price, quantity }, index) => {
+      total += price * quantity;
+      const li = document.createElement('li');
+
+      const spanName = document.createElement('span');
+      spanName.textContent = `${name} x${quantity}`;
+      spanName.classList.add('item-name');
+
+      const spanPrice = document.createElement('span');
+      spanPrice.textContent = `$${(price * quantity).toFixed(2)}`;
+
+      const btnRemove = document.createElement('button');
+      btnRemove.textContent = 'Remove';
+      btnRemove.className = 'remove-item';
+      btnRemove.onclick = () => {
+        removeFromCart(index);
+      };
+
+      li.appendChild(spanName);
+      li.appendChild(spanPrice);
+      li.appendChild(btnRemove);
+
+      cartItemsEl.appendChild(li);
+    });
+
+    if (discountPercent > 0) {
+      total = total * (1 - discountPercent / 100);
+    }
+
+    cartTotalEl.textContent = `Total: $${total.toFixed(2)}${discountPercent > 0 ? ` (Discount: ${discountPercent}%)` : ''}`;
+  }
+
+  function removeFromCart(index) {
+    cart.splice(index, 1);
+    updateCartUI();
+  }
+
+  function clearCart() {
+    if (confirm('Clear all items from cart?')) {
+      cart.length = 0;
+      updateCartUI();
+    }
+  }
+
+  function toggleCart() {
+    document.getElementById('cartSidebar').classList.toggle('open');
+  }
+
+  function openCart() {
+    document.getElementById('cartSidebar').classList.add('open');
+  }
+
+  function selectDate() {
+    purchaseDate = document.getElementById('purchaseDate').value;
+    alert(`Purchase date selected: ${purchaseDate}`);
+  }
+
+  function applyDiscount() {
+    const select = document.getElementById('discountSelect');
+    discountPercent = Number(select.value);
+    updateCartUI();
+  }
+
+  function checkout() {
+    if (cart.length === 0) {
+      alert('Your cart is empty!');
+      return;
+    }
+    if (!purchaseDate) {
+      alert('Please select a purchase date.');
+      return;
+    }
+
+    const order = {
+      date: purchaseDate,
+      discount: discountPercent,
+      items: cart.map(item => ({ ...item })),
+      total: calculateTotal(),
+      orderTime: new Date().toLocaleString(),
+    };
+
+    orderHistory.push(order);
+    updateOrderHistoryUI();
+
+    alert(`Order placed successfully! Total: $${order.total.toFixed(2)} on ${order.orderTime}`);
+
+    clearCart();
+    document.getElementById('purchaseDate').value = '';
+    purchaseDate = null;
+    discountPercent = 0;
+    document.getElementById('discountSelect').value = "0";
+    updateCartUI();
+  }
+
+  function calculateTotal() {
+    let total = 0;
+    cart.forEach(({ price, quantity }) => {
+      total += price * quantity;
+    });
+    if (discountPercent > 0) {
+      total *= (1 - discountPercent / 100);
+    }
+    return total;
+  }
+
+  function updateOrderHistoryUI() {
+    const historyEl = document.getElementById('orderHistoryDropdown');
+    historyEl.innerHTML = '';
+
+    if (orderHistory.length === 0) {
+      historyEl.innerHTML = '<p style="padding: 10px; font-style: italic; margin: 0;">No orders yet.</p>';
+      return;
+    }
+
+    orderHistory.slice().reverse().forEach(order => {
+      const div = document.createElement('div');
+      div.className = 'history-item';
+
+      const itemsDesc = order.items.map(i => `${i.name} x${i.quantity}`).join(', ');
+
+      div.innerHTML = `
+        <strong>${order.orderTime}</strong><br/>
+        Date to Buy: ${order.date}<br/>
+        Items: ${itemsDesc}<br/>
+        Discount: ${order.discount}%<br/>
+        Total Paid: $${order.total.toFixed(2)}
+      `;
+
+      historyEl.appendChild(div);
+    });
+  }
+</script>
+
+</body>
+</html>
